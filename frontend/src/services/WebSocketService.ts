@@ -5,6 +5,7 @@ import { OrderBookData, Trade, Order } from '../types';
 export class WebSocketService {
   private client: Client | null = null;
   private connected = false;
+  private connectionListeners: (() => void)[] = [];
 
   constructor() {
     this.connect();
@@ -27,6 +28,8 @@ export class WebSocketService {
     this.client.onConnect = (frame) => {
       console.log('Connected to WebSocket:', frame);
       this.connected = true;
+      // Notify all listeners that connection is established
+      this.connectionListeners.forEach(listener => listener());
     };
 
     this.client.onStompError = (frame) => {
@@ -44,6 +47,21 @@ export class WebSocketService {
     };
 
     this.client.activate();
+  }
+
+  public onConnection(callback: () => void): () => void {
+    if (this.connected) {
+      callback(); // Call immediately if already connected
+    } else {
+      this.connectionListeners.push(callback);
+    }
+    
+    return () => {
+      const index = this.connectionListeners.indexOf(callback);
+      if (index > -1) {
+        this.connectionListeners.splice(index, 1);
+      }
+    };
   }
 
   public subscribeToOrderBook(symbol: string, callback: (data: OrderBookData) => void): () => void {

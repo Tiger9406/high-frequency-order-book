@@ -38,13 +38,12 @@ public class OrderController {
         try {
             // Create order entity
             Order order = new Order(
-                request.getSymbol(),
-                Order.OrderSide.valueOf(request.getSide().toUpperCase()),
-                Order.OrderType.valueOf(request.getType().toUpperCase()),
-                request.getQuantity(),
-                request.getPrice(),
-                request.getUserId()
-            );
+                    request.getSymbol(),
+                    Order.OrderSide.valueOf(request.getSide().toUpperCase()),
+                    Order.OrderType.valueOf(request.getType().toUpperCase()),
+                    request.getQuantity(),
+                    request.getPrice(),
+                    request.getUserId());
 
             // Save order to database
             order = orderRepository.save(order);
@@ -57,7 +56,10 @@ public class OrderController {
 
             // Add remaining quantity to order book if not fully matched
             if (!matchResult.isFullyMatched() && order.getType() == Order.OrderType.LIMIT) {
-                orderBookManager.addOrderToBook(order);
+                orderBookManager.addOrderToBook(order); // This already broadcasts
+            } else {
+                // If order was fully matched or was a market order, broadcast update
+                orderBookManager.broadcastOrderBookUpdate(order.getSymbol());
             }
 
             // Send order update to user

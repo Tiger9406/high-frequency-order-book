@@ -35,21 +35,30 @@ export const useOrderBook = (symbol: string) => {
   }, [fetchInitialData]);
 
   useEffect(() => {
-    if (!symbol || !wsService.isConnected()) return;
+    if (!symbol) return;
 
-    // Subscribe to order book updates
-    const unsubscribeOrderBook = wsService.subscribeToOrderBook(symbol, (data) => {
-      setOrderBookData(data);
-    });
+    let unsubscribeOrderBook: (() => void) | null = null;
+    let unsubscribeTrades: (() => void) | null = null;
 
-    // Subscribe to trade updates
-    const unsubscribeTrades = wsService.subscribeToTrades(symbol, (trade) => {
-      setRecentTrades(prev => [trade, ...prev.slice(0, 49)]); // Keep last 50 trades
-    });
+    const setupSubscriptions = () => {
+      // Subscribe to order book updates
+      unsubscribeOrderBook = wsService.subscribeToOrderBook(symbol, (data) => {
+        setOrderBookData(data);
+      });
+
+      // Subscribe to trade updates
+      unsubscribeTrades = wsService.subscribeToTrades(symbol, (trade) => {
+        setRecentTrades(prev => [trade, ...prev.slice(0, 49)]); // Keep last 50 trades
+      });
+    };
+
+    // Set up subscriptions when connected
+    const removeConnectionListener = wsService.onConnection(setupSubscriptions);
 
     return () => {
-      unsubscribeOrderBook();
-      unsubscribeTrades();
+      removeConnectionListener();
+      if (unsubscribeOrderBook) unsubscribeOrderBook();
+      if (unsubscribeTrades) unsubscribeTrades();
     };
   }, [symbol, wsService]);
 

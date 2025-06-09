@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Order } from '../types';
-import { ApiService } from '../services/ApiService';
-import { useOrderSubmission } from '../hooks/useOrderSubmission';
-import { WebSocketService } from '../services/WebSocketService';
+import React, { useState, useEffect, useCallback } from "react";
+import { Order } from "../types";
+import { ApiService } from "../services/ApiService";
+import { useOrderSubmission } from "../hooks/useOrderSubmission";
+import { WebSocketService } from "../services/WebSocketService";
 
 interface UserOrdersPanelProps {
   userId: string;
@@ -15,41 +15,51 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
   const { cancelOrder, submitting } = useOrderSubmission();
   const [wsService] = useState(() => new WebSocketService());
 
-  const fetchUserOrders = async () => {
+  const fetchUserOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const userOrders = await ApiService.getUserOrders(userId);
       setOrders(userOrders);
     } catch (err) {
-      setError('Failed to fetch user orders');
-      console.error('Error fetching user orders:', err);
+      setError("Failed to fetch user orders");
+      console.error("Error fetching user orders:", err);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchUserOrders();
   }, [userId]);
 
   useEffect(() => {
-    if (!wsService.isConnected()) return;
+    fetchUserOrders();
+  }, [fetchUserOrders]);
 
-    const unsubscribe = wsService.subscribeToUserOrders(userId, (updatedOrder) => {
-      setOrders(prev => {
-        const index = prev.findIndex(order => order.id === updatedOrder.id);
-        if (index >= 0) {
-          const newOrders = [...prev];
-          newOrders[index] = updatedOrder;
-          return newOrders;
-        } else {
-          return [updatedOrder, ...prev];
-        }
+  useEffect(() => {
+    if (!userId) return;
+
+    let unsubscribe: (() => void) | null = null;
+
+    const setupSubscription = () => {
+      unsubscribe = wsService.subscribeToUserOrders(userId, (updatedOrder) => {
+        setOrders((prev) => {
+          const index = prev.findIndex((order) => order.id === updatedOrder.id);
+          if (index >= 0) {
+            const newOrders = [...prev];
+            newOrders[index] = updatedOrder;
+            return newOrders;
+          } else {
+            return [updatedOrder, ...prev];
+          }
+        });
       });
-    });
+    };
 
-    return unsubscribe;
+    // Set up subscription when connected
+    const removeConnectionListener = wsService.onConnection(setupSubscription);
+
+    return () => {
+      removeConnectionListener();
+      if (unsubscribe) unsubscribe();
+    };
   }, [userId, wsService]);
 
   const handleCancelOrder = async (orderId: number) => {
@@ -64,7 +74,7 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
   };
 
   const formatPrice = (price?: number) => {
-    return price ? price.toFixed(2) : 'Market';
+    return price ? price.toFixed(2) : "Market";
   };
 
   const formatQuantity = (quantity: number) => {
@@ -73,15 +83,19 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'FILLED': return 'green';
-      case 'CANCELLED': return 'red';
-      case 'PARTIAL_FILLED': return 'orange';
-      default: return 'blue';
+      case "FILLED":
+        return "green";
+      case "CANCELLED":
+        return "red";
+      case "PARTIAL_FILLED":
+        return "orange";
+      default:
+        return "blue";
     }
   };
 
   const canCancelOrder = (order: Order) => {
-    return order.status === 'PENDING' || order.status === 'PARTIAL_FILLED';
+    return order.status === "PENDING" || order.status === "PARTIAL_FILLED";
   };
 
   if (loading) {
@@ -105,7 +119,7 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
           Refresh
         </button>
       </div>
-      
+
       <div className="orders-container">
         {orders.length === 0 ? (
           <div className="no-orders">No orders found</div>
@@ -118,14 +132,14 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                     {order.side}
                   </span>
                   <span className="order-symbol">{order.symbol}</span>
-                  <span 
-                    className="order-status" 
+                  <span
+                    className="order-status"
                     style={{ color: getStatusColor(order.status) }}
                   >
                     {order.status}
                   </span>
                 </div>
-                
+
                 <div className="order-details">
                   <div className="order-row">
                     <span>Type:</span>
@@ -148,7 +162,7 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                     <span>{formatDateTime(order.createdAt)}</span>
                   </div>
                 </div>
-                
+
                 {canCancelOrder(order) && (
                   <div className="order-actions">
                     <button
@@ -156,7 +170,7 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                       disabled={submitting}
                       className="cancel-btn"
                     >
-                      {submitting ? 'Cancelling...' : 'Cancel'}
+                      {submitting ? "Cancelling..." : "Cancel"}
                     </button>
                   </div>
                 )}
