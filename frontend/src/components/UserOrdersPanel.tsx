@@ -69,9 +69,18 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
     }
   };
 
-  const formatDateTime = (timestamp: string) => {
+  /*const formatDateTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
+  };*/
+
+  const formatDateTime = (timestamp: string) => {
+    const dateObj = new Date(timestamp);
+    return {
+      date: dateObj.toLocaleDateString(),
+      time: dateObj.toLocaleTimeString(),
+    };
   };
+  
 
   const formatPrice = (price?: number) => {
     return price ? price.toFixed(2) : "Market";
@@ -157,10 +166,19 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                     <span>Remaining:</span>
                     <span>{formatQuantity(order.remainingQuantity)}</span>
                   </div>
-                  <div className="order-row">
+                 { /*<div className="order-row">
                     <span>Created:</span>
                     <span>{formatDateTime(order.createdAt)}</span>
-                  </div>
+                 </div>*/}
+                  <div className="order-row">
+  <span>Created:</span>
+  <span>
+    {formatDateTime(order.createdAt).date}
+    <br />
+    {formatDateTime(order.createdAt).time}
+  </span>
+</div>
+
                 </div>
 
                 {canCancelOrder(order) && (
