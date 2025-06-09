@@ -152,6 +152,12 @@ public class MatchingEngine {
         orderRepository.save(buyOrder);
         orderRepository.save(sellOrder);
 
+        // Send order updates to both users involved in the trade
+        webSocketService.sendOrderUpdate(buyOrder.getUserId(), new com.orderbook.dto.OrderResponse(buyOrder));
+        webSocketService.sendOrderUpdate(sellOrder.getUserId(), new com.orderbook.dto.OrderResponse(sellOrder));
+        // error message that debugs buyOrder.getUserId() + " " + sellOrder.getUserId());
+        // Broadcast order book update
+
         // Remove filled orders from order book
         if (buyOrder.getRemainingQuantity().compareTo(BigDecimal.ZERO) == 0) {
             orderBook.removeOrder(buyOrder.getId());

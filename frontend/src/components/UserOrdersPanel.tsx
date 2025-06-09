@@ -155,15 +155,15 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                     <span>{order.type}</span>
                   </div>
                   <div className="order-row">
-                    <span>Price: </span>
+                    <span>Price: <br></br></span>
                     <span>{formatPrice(order.price)}</span>
                   </div>
                   <div className="order-row">
-                    <span>Quantity: </span>
+                    <span>Quantity: <br></br></span>
                     <span>{formatQuantity(order.quantity)}</span>
                   </div>
                   <div className="order-row">
-                    <span>Remaining: </span>
+                    <span>Remaining: <br></br> </span>
                     <span>{formatQuantity(order.remainingQuantity)}</span>
                   </div>
                  { /*<div className="order-row">
