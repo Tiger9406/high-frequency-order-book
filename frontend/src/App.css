@@ -1,3 +1,10 @@
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 .app {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -6,7 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   background-color: #0f1419;
   color: #ffffff;
-  min-height: 100vh;
+  height: 100vh;
   flex-direction: column;
   display: flex;
   overflow: hidden;
@@ -96,13 +103,15 @@
 
 .trading-grid {
   display: grid;
-  grid-template-columns: 1fr 300px 1fr 300px;
-  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr 1fr 1.6fr; /* First 3 equal, last one 1.5x wider */
+  grid-template-rows: 1fr;
   gap: 1rem;
-  max-width: 1400px;
+  width: 100%; /* Increase to accommodate wider section */
   margin: 0 auto;
   flex: 1;
   overflow: hidden;
+  height: 100%;
+  min-height: 0;
 }
 
 /* Order Book Styles */
@@ -553,8 +562,8 @@
 .user-orders {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  height: 80%;
+  overflow: auto;
 }
 
 .asks, 
@@ -563,4 +572,5 @@
 .orders-container {
   flex: 1;
   overflow-y: auto;
+  padding-right: 8px;
 }
