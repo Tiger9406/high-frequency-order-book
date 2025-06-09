@@ -432,7 +432,30 @@
   margin-bottom: 0.5rem;
 }
 
+// change 
 .order-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #848e9c;
+  gap: 0.5rem;
+}
+
+.order-row span {
+  min-width: 0;
+}
+
+.order-row span:last-child {
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  text-align: right;
+  flex: 1;
+}
+
+
+/*.order-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;
@@ -442,7 +465,7 @@
 .order-row span:last-child {
   color: #ffffff;
   font-family: 'Courier New', monospace;
-}
+}*/
 
 .order-actions {
   text-align: right;

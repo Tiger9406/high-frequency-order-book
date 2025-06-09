@@ -151,19 +151,19 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
 
                 <div className="order-details">
                   <div className="order-row">
-                    <span>Type:</span>
+                    <span>Type: </span>
                     <span>{order.type}</span>
                   </div>
                   <div className="order-row">
-                    <span>Price:</span>
+                    <span>Price: </span>
                     <span>{formatPrice(order.price)}</span>
                   </div>
                   <div className="order-row">
-                    <span>Quantity:</span>
+                    <span>Quantity: </span>
                     <span>{formatQuantity(order.quantity)}</span>
                   </div>
                   <div className="order-row">
-                    <span>Remaining:</span>
+                    <span>Remaining: </span>
                     <span>{formatQuantity(order.remainingQuantity)}</span>
                   </div>
                  { /*<div className="order-row">
@@ -171,7 +171,7 @@ const UserOrdersPanel: React.FC<UserOrdersPanelProps> = ({ userId }) => {
                     <span>{formatDateTime(order.createdAt)}</span>
                  </div>*/}
                   <div className="order-row">
-  <span>Created:</span>
+  <span>Created:<br></br> </span>
   <span>
     {formatDateTime(order.createdAt).date}
     <br />
