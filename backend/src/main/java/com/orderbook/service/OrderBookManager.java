@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OrderBookManager {
 
+    //manages all order books for different symbols
     private final ConcurrentHashMap<String, OrderBook> orderBooks = new ConcurrentHashMap<>();
 
     @Autowired
@@ -25,6 +26,8 @@ public class OrderBookManager {
         return orderBooks.computeIfAbsent(symbol, this::createOrderBook);
     }
 
+    //creates a new order book for the given symbol; //also loads existing active orders from the database
+    //if already exists, it returns the existing one
     private OrderBook createOrderBook(String symbol) {
         OrderBook orderBook = new OrderBook(symbol);
         
@@ -60,6 +63,7 @@ public class OrderBookManager {
         );
     }
 
+    //broadcast to all connected clients
     public void broadcastOrderBookUpdate(String symbol) {
         OrderBookData data = getOrderBookData(symbol, 20); // Top 20 levels
         webSocketService.broadcastOrderBook(data);

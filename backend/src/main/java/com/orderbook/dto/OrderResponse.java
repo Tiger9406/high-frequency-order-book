@@ -4,6 +4,7 @@ import com.orderbook.entity.Order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// to represent an order response to be sent back to the user
 public class OrderResponse {
     private Long id;
     private String symbol;

@@ -2,6 +2,7 @@ package com.orderbook.dto;
 
 import java.math.BigDecimal;
 
+// to represent an order request from a user
 public class OrderRequest {
     private String symbol;
     private String side; // BUY or SELL

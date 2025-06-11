@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// controller managing order book data for different trading symbols
 @RestController
 @RequestMapping("/api/orderbook")
 public class OrderBookController {

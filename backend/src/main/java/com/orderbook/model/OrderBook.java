@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 public class OrderBook {
     private final String symbol;
+
+    //Tree map but thread safe, using ConcurrentSkipListMap
     private final ConcurrentSkipListMap<BigDecimal, List<Order>> bids; // Price descending
     private final ConcurrentSkipListMap<BigDecimal, List<Order>> asks; // Price ascending
     private final Map<Long, Order> orderMap;
@@ -24,6 +26,8 @@ public class OrderBook {
         orderMap.put(order.getId(), order);
         
         if (order.getSide() == Order.OrderSide.BUY) {
+            //if exists already, use it; if not make new list
+            // and add the order to it
             bids.computeIfAbsent(order.getPrice(), k -> new ArrayList<>()).add(order);
         } else {
             asks.computeIfAbsent(order.getPrice(), k -> new ArrayList<>()).add(order);
@@ -61,6 +65,7 @@ public class OrderBook {
         return getPriceLevels(asks, depth);
     }
 
+    // Helper method to get price levels for bids or asks; stops after depth to be efficient
     private List<PriceLevel> getPriceLevels(ConcurrentSkipListMap<BigDecimal, List<Order>> side, int depth) {
         List<PriceLevel> levels = new ArrayList<>();
         int count = 0;

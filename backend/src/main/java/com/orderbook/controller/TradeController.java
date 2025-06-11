@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+// controller for past/occurred trades
 @RestController
 @RequestMapping("/api/trades")
 public class TradeController {

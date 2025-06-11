@@ -3,6 +3,7 @@ package com.orderbook.dto;
 import com.orderbook.entity.Trade;
 import java.util.List;
 
+// encapsulates the result of a match operation in the order book
 public class MatchResult {
     private List<Trade> trades;
     private boolean fullyMatched;

@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
+// allows CORS requests from specific origins
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

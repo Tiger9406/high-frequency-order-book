@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class WebSocketController {
-
+// for testing; simple websocket that echoes messages
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     public String greeting(String message) throws Exception {
